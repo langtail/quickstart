@@ -29,7 +29,7 @@ const generateMealIdeas = async (selectedIngredients: string[]) => {
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error("Failed to generate meal ideas.");
+    throw new Error(`Failed to generate meal ideas. ${text}`);
   }
 
   const data = await response.json();
