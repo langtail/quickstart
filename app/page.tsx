@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -13,44 +12,46 @@ const ingredients = {
     "Salmon",
     "Shrimp",
     "Turkey",
-    "Lamb",
-    "Duck",
   ],
   vegetables: [
     "Broccoli",
     "Carrots",
     "Spinach",
-    "Potatoes",
+    "Bell Peppers",
     "Onions",
+    "Garlic",
     "Tomatoes",
-    "Peppers",
-    "Mushrooms",
     "Zucchini",
-    "Cauliflower",
   ],
-  fruits: [
-    "Apples",
-    "Bananas",
-    "Oranges",
-    "Berries",
-    "Lemons",
-    "Grapes",
-    "Melons",
-    "Peaches",
-    "Pineapples",
-    "Mangoes",
+  grains: [
+    "Rice",
+    "Quinoa",
+    "Pasta",
+    "Couscous",
+    "Bread",
+    "Tortillas",
+    "Oats",
+    "Barley",
   ],
-  nuts: [
-    "Almonds",
-    "Walnuts",
-    "Cashews",
-    "Peanuts",
-    "Pecans",
-    "Pistachios",
-    "Hazelnuts",
-    "Macadamia",
-    "Brazil Nuts",
-    "Pine Nuts",
+  dairy: [
+    "Milk",
+    "Cheese",
+    "Yogurt",
+    "Cream",
+    "Butter",
+    "Sour Cream",
+    "Cottage Cheese",
+    "Cream Cheese",
+  ],
+  herbs: [
+    "Basil",
+    "Parsley",
+    "Cilantro",
+    "Rosemary",
+    "Thyme",
+    "Oregano",
+    "Mint",
+    "Dill",
   ],
 };
 
@@ -104,13 +105,13 @@ export default function Home() {
         {Object.entries(ingredients).map(([category, items]) => (
           <div key={category}>
             <h2 className="text-2xl font-semibold mb-4 capitalize">{category}</h2>
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               {items.map((ingredient) => (
                 <button
                   key={ingredient}
                   className={`px-4 py-2 rounded ${selectedIngredients.includes(ingredient)
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
                     }`}
                   onClick={() => handleIngredientClick(ingredient)}
                 >
@@ -123,8 +124,8 @@ export default function Home() {
       </div>
       <button
         className={`px-8 py-4 rounded-lg font-semibold text-lg ${isLoading
-          ? "bg-white text-green-500 border-2 border-green-500"
-          : "bg-green-500 text-white"
+            ? "bg-white text-green-500 border-2 border-green-500"
+            : "bg-green-500 text-white"
           }`}
         onClick={handleInspireClick}
         disabled={isLoading}
