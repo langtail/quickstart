@@ -1,39 +1,55 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { LangtailCompletion } from "@langtail/node";
+
+const {
+  LANGTAIL_API_KEY,
+  LANGTAIL_WORKSPACE,
+  LANGTAIL_PROMPT,
+  LANGTAIL_ENVIRONMENT,
+  LANGTAIL_BASE_URL,
+  LANGTAIL_API_URL,
+} = process.env;
+
+if (!LANGTAIL_API_KEY) {
+  throw new Error("LANGTAIL_API_KEY is not defined.");
+}
 
 const generateMealIdeas = async (selectedIngredients: string[]) => {
-  const { LANGTAIL_API_KEY, LANGTAIL_API_URL } = process.env;
-
-  if (!LANGTAIL_API_KEY) {
-    throw new Error("LANGTAIL_API_KEY is not defined.");
+  if (!LANGTAIL_PROMPT) {
+    throw new Error("LANGTAIL_PROMPT is not defined.");
   }
 
-  if (!LANGTAIL_API_URL) {
-    throw new Error("LANGTAIL_API_URL is not defined.");
+  if (!LANGTAIL_ENVIRONMENT) {
+    throw new Error("LANGTAIL_ENVIRONMENT is not defined.");
   }
 
-  const options = {
-    method: "POST",
-    headers: {
-      "X-API-Key": LANGTAIL_API_KEY,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      stream: false,
-      variables: { selectedIngredients: JSON.stringify(selectedIngredients) },
-      doNotRecord: false,
-      messages: [{ role: "user", content: "Generate" }],
-    }),
-  };
+  // Initialize the LangtailCompletion instance
+  const lt = new LangtailCompletion({
+    apiKey: LANGTAIL_API_KEY,
+    baseURL: LANGTAIL_BASE_URL || "https://api.langtail.com",
+  });
 
-  const response = await fetch(LANGTAIL_API_URL, options);
+  try {
+    // Requesting the completion
+    const completion = await lt.request({
+      prompt: LANGTAIL_PROMPT,
+      environment: "staging",
+      variables: {
+        selectedIngredients: JSON.stringify(selectedIngredients),
+      },
+    });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Failed to generate meal ideas. ${text}`);
+    // Handling the response
+    if (completion && completion.choices && completion.choices.length > 0) {
+      return completion.choices[0].message; // Assuming the structure matches your needs
+    } else {
+      throw new Error("No meal ideas generated.");
+    }
+  } catch (error) {
+    // Handle any errors that occur during the API request
+    console.error("Failed to generate meal ideas with Langtail SDK:", error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data.choices[0].message;
 };
 
 export default async function handler(
