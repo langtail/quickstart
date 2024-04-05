@@ -1,39 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { LangtailCompletion } from "@langtail/node";
 
-const {
-  LANGTAIL_API_KEY,
-  LANGTAIL_WORKSPACE,
-  LANGTAIL_PROMPT_SLUG,
-  LANGTAIL_ENV,
-  LANGTAIL_BASE_URL,
-  LANGTAIL_API_URL,
-} = process.env;
+const { LANGTAIL_API_KEY, LANGTAIL_PROMPT_SLUG, LANGTAIL_ENV } = process.env;
 
 if (!LANGTAIL_API_KEY) {
   throw new Error("LANGTAIL_API_KEY is not defined.");
 }
 
+if (!LANGTAIL_PROMPT_SLUG) {
+  throw new Error("LANGTAIL_PROMPT_SLUG is not defined.");
+}
+
+if (!LANGTAIL_ENV) {
+  throw new Error("LANGTAIL_ENV is not defined.");
+}
+
 const generateMealIdeas = async (selectedIngredients: string[]) => {
-  if (!LANGTAIL_PROMPT_SLUG) {
-    throw new Error("LANGTAIL_PROMPT_SLUG is not defined.");
-  }
-
-  if (!LANGTAIL_ENV) {
-    throw new Error("LANGTAIL_ENV is not defined.");
-  }
-
   // Initialize the LangtailCompletion instance
   const lt = new LangtailCompletion({
     apiKey: LANGTAIL_API_KEY,
-    baseURL: LANGTAIL_BASE_URL || "https://api.langtail.com",
   });
 
   try {
     // Requesting the completion
     const completion = await lt.request({
       prompt: LANGTAIL_PROMPT_SLUG,
-      environment: "staging",
+      environment: LANGTAIL_ENV,
       variables: {
         selectedIngredients: JSON.stringify(selectedIngredients),
       },
