@@ -1,18 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { LangtailPrompts } from "@langtail/node";
 
-const { LANGTAIL_API_KEY, LANGTAIL_PROMPT_SLUG, LANGTAIL_ENV } = process.env;
+const { LANGTAIL_API_KEY } = process.env;
 
 if (!LANGTAIL_API_KEY) {
   throw new Error("LANGTAIL_API_KEY is not defined.");
-}
-
-if (!LANGTAIL_PROMPT_SLUG) {
-  throw new Error("LANGTAIL_PROMPT_SLUG is not defined.");
-}
-
-if (!LANGTAIL_ENV) {
-  throw new Error("LANGTAIL_ENV is not defined.");
 }
 
 const generateMealIdeas = async (selectedIngredients: string[]) => {
@@ -24,8 +16,8 @@ const generateMealIdeas = async (selectedIngredients: string[]) => {
   try {
     // Requesting the completion
     const completion = await lt.invoke({
-      prompt: LANGTAIL_PROMPT_SLUG,
-      environment: LANGTAIL_ENV,
+      prompt: "quickstart",
+      environment: "staging",
       variables: {
         selectedIngredients: JSON.stringify(selectedIngredients),
       },
