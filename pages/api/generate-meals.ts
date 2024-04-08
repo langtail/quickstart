@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { LangtailCompletion } from "@langtail/node";
+import { LangtailPrompts } from "@langtail/node";
 
 const { LANGTAIL_API_KEY, LANGTAIL_PROMPT_SLUG, LANGTAIL_ENV } = process.env;
 
@@ -16,14 +16,14 @@ if (!LANGTAIL_ENV) {
 }
 
 const generateMealIdeas = async (selectedIngredients: string[]) => {
-  // Initialize the LangtailCompletion instance
-  const lt = new LangtailCompletion({
+  // Initialize the LangtailPrompts instance
+  const lt = new LangtailPrompts({
     apiKey: LANGTAIL_API_KEY,
   });
 
   try {
     // Requesting the completion
-    const completion = await lt.request({
+    const completion = await lt.invoke({
       prompt: LANGTAIL_PROMPT_SLUG,
       environment: LANGTAIL_ENV,
       variables: {
