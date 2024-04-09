@@ -13,26 +13,20 @@ const generateMealIdeas = async (selectedIngredients: string[]) => {
     apiKey: LANGTAIL_API_KEY,
   });
 
-  try {
-    // Requesting the completion
-    const completion = await lt.invoke({
-      prompt: "quickstart",
-      environment: "staging",
-      variables: {
-        selectedIngredients: JSON.stringify(selectedIngredients),
-      },
-    });
+  // Requesting the completion
+  const completion = await lt.invoke({
+    prompt: "quickstart",
+    environment: "staging",
+    variables: {
+      selectedIngredients: JSON.stringify(selectedIngredients),
+    },
+  });
 
-    // Handling the response
-    if (completion && completion.choices && completion.choices.length > 0) {
-      return completion.choices[0].message; // Assuming the structure matches your needs
-    } else {
-      throw new Error("No meal ideas generated.");
-    }
-  } catch (error) {
-    // Handle any errors that occur during the API request
-    console.error("Failed to generate meal ideas with Langtail SDK:", error);
-    throw error;
+  // Handling the response
+  if (completion && completion.choices && completion.choices.length > 0) {
+    return completion.choices[0].message; // Assuming the structure matches your needs
+  } else {
+    throw new Error("No meal ideas generated.");
   }
 };
 
