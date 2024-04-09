@@ -1,39 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { LangtailPrompts } from "@langtail/node";
+
+const { LANGTAIL_API_KEY } = process.env;
+
+if (!LANGTAIL_API_KEY) {
+  throw new Error("LANGTAIL_API_KEY is not defined.");
+}
 
 const generateMealIdeas = async (selectedIngredients: string[]) => {
-  const { LANGTAIL_API_KEY, LANGTAIL_API_URL } = process.env;
+  // Initialize the LangtailPrompts instance
+  const lt = new LangtailPrompts({
+    apiKey: LANGTAIL_API_KEY,
+  });
 
-  if (!LANGTAIL_API_KEY) {
-    throw new Error("LANGTAIL_API_KEY is not defined.");
-  }
-
-  if (!LANGTAIL_API_URL) {
-    throw new Error("LANGTAIL_API_URL is not defined.");
-  }
-
-  const options = {
-    method: "POST",
-    headers: {
-      "X-API-Key": LANGTAIL_API_KEY,
-      "content-type": "application/json",
+  // Requesting the completion
+  const completion = await lt.invoke({
+    prompt: "quickstart",
+    environment: "staging",
+    variables: {
+      selectedIngredients: JSON.stringify(selectedIngredients),
     },
-    body: JSON.stringify({
-      stream: false,
-      variables: { selectedIngredients: JSON.stringify(selectedIngredients) },
-      doNotRecord: false,
-      messages: [{ role: "user", content: "Generate" }],
-    }),
-  };
+  });
 
-  const response = await fetch(LANGTAIL_API_URL, options);
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Failed to generate meal ideas. ${text}`);
+  // Handling the response
+  if (completion && completion.choices && completion.choices.length > 0) {
+    return completion.choices[0].message; // Assuming the structure matches your needs
+  } else {
+    throw new Error("No meal ideas generated.");
   }
-
-  const data = await response.json();
-  return data.choices[0].message;
 };
 
 export default async function handler(
