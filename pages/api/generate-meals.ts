@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { LangtailPrompts } from "@langtail/node";
+import { LangtailPrompts } from "langtail";
 
 const { LANGTAIL_API_KEY } = process.env;
 
